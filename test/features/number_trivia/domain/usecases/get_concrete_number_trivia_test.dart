@@ -15,7 +15,7 @@ void main() {
   final usecase = GetConcreteNumberTrivia(mockNumberTriviaRepository);
 
   test(
-    'should get trivia for the input number from the repository',
+    'get trivia for the input number from the repository',
     () async {
       //arrange
       when(mockNumberTriviaRepository.getConcreteNumberTrivia(1))

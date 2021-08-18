@@ -15,7 +15,7 @@ void main() {
   final usecase = GetRandomNumberTrivia(mockNumberTriviaRepository);
 
   test(
-    'should get trivia from the repository',
+    'get trivia from the repository',
     () async {
       //arrange
       when(mockNumberTriviaRepository.getRandomNumberTrivia())

@@ -9,12 +9,12 @@ import '../../../../fixtures/fixture_reader.dart';
 void main() {
   const tNumberTriviaModel = NumberTriviaModel(number: 1, text: 'Test Text');
 
-  test('should be a subclass of NumberTrivia entity', () async {
+  test('is a subclass of NumberTrivia entity', () async {
     expect(tNumberTriviaModel, isA<NumberTrivia>());
   });
 
   group('fromJSON', () {
-    test('should return a valid model when JSON number is integer', () async {
+    test('return a valid model when JSON number is integer', () async {
       //arange
       final Map<String, dynamic> jsonMap =
           json.decode(fixtureReader('trivia.json'));
@@ -23,7 +23,7 @@ void main() {
       //assert
       expect(result, tNumberTriviaModel);
     });
-    test('should return a valid model when JSON number is double', () async {
+    test('return a valid model when JSON number is double', () async {
       //arange
       final Map<String, dynamic> jsonMap =
           json.decode(fixtureReader('trivia_double.json'));
@@ -35,7 +35,7 @@ void main() {
   });
 
   group('toJSON', () {
-    test('should return a JSON map containing data', () async {
+    test('return a JSON map containing data', () async {
       //act
       final result = tNumberTriviaModel.toJson();
       //assert
