@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_learn_architecture/core/error/exceptions.dart';
+import 'package:flutter_learn_architecture/core/error/failures.dart';
 import 'package:flutter_learn_architecture/core/platform/network_info.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/repositories/number_trivia_repository_implementation.dart';
@@ -48,7 +50,7 @@ void main() {
       test('return remote data when call to remote source is successful',
           () async {
         //arrange
-        when(mockRemoteSource.getConcreteNumberTrivia(tNumber))
+        when(mockRemoteSource.getConcreteNumberTrivia(any))
             .thenAnswer((_) async => tNumberTriviaModel);
         //act
         final result = await repository.getConcreteNumberTrivia(tNumber);
@@ -59,13 +61,26 @@ void main() {
       test('cache data locally when call to remote source is successful',
           () async {
         //arrange
-        when(mockRemoteSource.getConcreteNumberTrivia(tNumber))
+        when(mockRemoteSource.getConcreteNumberTrivia(any))
             .thenAnswer((_) async => tNumberTriviaModel);
         //act
         await repository.getConcreteNumberTrivia(tNumber);
         //assert
         verify(mockRemoteSource.getConcreteNumberTrivia(tNumber));
         verify(mockLocalSource.cacheNumberTrivia(tNumberTriviaModel));
+      });
+      test('return server failure when call to remote source is unsuccessful',
+          () async {
+        //arrange
+        reset(mockLocalSource);
+        when(mockRemoteSource.getConcreteNumberTrivia(any))
+            .thenThrow(ServerException());
+        //act
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        //assert
+        verify(mockRemoteSource.getConcreteNumberTrivia(tNumber));
+        verifyZeroInteractions(mockLocalSource);
+        expect(result, Left(ServerFailure()));
       });
     });
     group('device is offline', () {
