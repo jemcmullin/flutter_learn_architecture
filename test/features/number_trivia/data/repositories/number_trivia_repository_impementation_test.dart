@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter_learn_architecture/core/platform/network_info.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/repositories/number_trivia_repository_implementation.dart';
@@ -33,10 +34,32 @@ void main() {
     test('check if device is online', () async {
       //arrange
       when(mockNetworkInfo.isConnected).thenAnswer((_) async => true);
+      when(mockRemoteSource.getConcreteNumberTrivia(any))
+          .thenAnswer((_) async => tNumberTriviaModel);
       //act
       repository.getConcreteNumberTrivia(tNumber);
       //assert
       verify(mockNetworkInfo.isConnected);
+    });
+
+    group('device is online', () {
+      setUp(() =>
+          when(mockNetworkInfo.isConnected).thenAnswer((_) async => true));
+      test('return remote data when call to remote source is successful',
+          () async {
+        //arrange
+        when(mockRemoteSource.getConcreteNumberTrivia(tNumber))
+            .thenAnswer((_) async => tNumberTriviaModel);
+        //act
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        //assert
+        verify(mockRemoteSource.getConcreteNumberTrivia(tNumber));
+        expect(result, const Right(tNumberTrivia));
+      });
+    });
+    group('device is offline', () {
+      setUp(() =>
+          when(mockNetworkInfo.isConnected).thenAnswer((_) async => false));
     });
   });
 }
