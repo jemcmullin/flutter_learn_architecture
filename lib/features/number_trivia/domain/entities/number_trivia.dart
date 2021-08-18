@@ -5,10 +5,10 @@ class NumberTrivia extends Equatable {
   final int number;
 
   const NumberTrivia({
-    required this.text,
     required this.number,
+    required this.text,
   });
 
   @override
-  List<Object> get props => [text, number];
+  List<Object> get props => [number, text];
 }
