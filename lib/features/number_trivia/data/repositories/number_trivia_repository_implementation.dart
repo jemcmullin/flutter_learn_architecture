@@ -33,8 +33,12 @@ class NumberTriviaRepositoryImplementation implements NumberTriviaRepository {
         return Left(ServerFailure());
       }
     } else {
-      final localData = await localDataSource.getlastNumberTrivia();
-      return Right(localData);
+      try {
+        final localData = await localDataSource.getlastNumberTrivia();
+        return Right(localData);
+      } on CacheException {
+        return Left(CacheFailure());
+      }
     }
   }
 
