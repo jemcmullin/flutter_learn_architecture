@@ -86,6 +86,19 @@ void main() {
     group('device is offline', () {
       setUp(() =>
           when(mockNetworkInfo.isConnected).thenAnswer((_) async => false));
+
+      test('return last local cache data when data is present', () async {
+        //arrange
+        reset(mockRemoteSource);
+        when(mockLocalSource.getlastNumberTrivia())
+            .thenAnswer((_) async => tNumberTriviaModel);
+        //act
+        final result = await repository.getConcreteNumberTrivia(tNumber);
+        //assert
+        verifyZeroInteractions(mockRemoteSource);
+        verify(mockLocalSource.getlastNumberTrivia());
+        expect(result, const Right(tNumberTrivia));
+      });
     });
   });
 }
