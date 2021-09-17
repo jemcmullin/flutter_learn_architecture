@@ -40,7 +40,7 @@ dependencies:
   dartz: ^0.10.0
   # Remote API
   http: ^0.13.3
-  data_connection_checker_tv: ^0.3.5-nullsafety
+  internet_connection_checker: ^0.0.1+2
   # Local cache
   shared_preferences: ^2.0.6
 
