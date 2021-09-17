@@ -3,7 +3,7 @@ import 'package:flutter_learn_architecture/core/error/exceptions.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/models/number_trivia_model.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../../../core/platform/network_info.dart';
+import '../../../../core/network/network_info.dart';
 import '../../domain/entities/number_trivia.dart';
 import '../../domain/repositories/number_trivia_repository.dart';
 import '../sources/number_trivia_local_source.dart';

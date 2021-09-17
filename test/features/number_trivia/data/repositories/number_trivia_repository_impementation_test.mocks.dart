@@ -4,7 +4,7 @@
 
 import 'dart:async' as _i4;
 
-import 'package:flutter_learn_architecture/core/platform/network_info.dart'
+import 'package:flutter_learn_architecture/core/network/network_info.dart'
     as _i6;
 import 'package:flutter_learn_architecture/features/number_trivia/data/models/number_trivia_model.dart'
     as _i2;
