@@ -42,4 +42,19 @@ void main() {
       expect(() => call(), throwsA(isA<CacheException>()));
     });
   });
+
+  group('cacheNumberTrivia', () {
+    const tNumberTrivaModel = NumberTriviaModel(number: 1, text: 'Test Text');
+    test('should call SharedPreferences to cache data', () async {
+      //arrange
+      when(mockSharedPreferences.setString(any, any))
+          .thenAnswer((_) async => true);
+      //act
+      dataSource.cacheNumberTrivia(tNumberTrivaModel);
+      //assert
+      final expectedJsonString = json.encode(tNumberTrivaModel.toJson());
+      verify(mockSharedPreferences.setString(
+          CACHED_NUMBER_TRIVIA, expectedJsonString));
+    });
+  });
 }
