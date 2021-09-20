@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_learn_architecture/core/error/exceptions.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/models/number_trivia_model.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/sources/number_trivia_local_source.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,8 +29,17 @@ void main() {
       //act
       final result = await dataSource.getlastNumberTrivia();
       //assert
-      verify(mockSharedPreferences.getString('CACHED_NUMBER_TRIVIA'));
+      verify(mockSharedPreferences.getString(CACHED_NUMBER_TRIVIA));
       expect(result, tNumberTriviaModel);
+    });
+
+    test('should throw CacheException when does not exist in cache', () async {
+      //arrange
+      when(mockSharedPreferences.getString(any)).thenReturn(null);
+      //act
+      final call = dataSource.getlastNumberTrivia;
+      //assert
+      expect(() => call(), throwsA(isA<CacheException>()));
     });
   });
 }
