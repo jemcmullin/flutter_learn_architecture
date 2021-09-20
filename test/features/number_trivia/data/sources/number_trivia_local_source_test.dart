@@ -10,7 +10,7 @@ import '../../../../fixtures/fixture_reader.dart';
 import './number_trivia_local_source_test.mocks.dart';
 
 @GenerateMocks([SharedPreferences])
-void main(List<String> args) {
+void main() {
   final mockSharedPreferences = MockSharedPreferences();
   final dataSource = NumberTriviaLocalSourceImplementation(
     sharedPreferences: mockSharedPreferences,
