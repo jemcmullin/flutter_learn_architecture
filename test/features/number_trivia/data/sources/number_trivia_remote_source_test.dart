@@ -16,4 +16,39 @@ void main() {
   final mockHttpClient = MockHttpClient();
   final dataSource =
       NumberTriviaRemoteSourceImplementation(client: mockHttpClient);
+
+  group('getConcreteNumberTrivia', () {
+    const tNumber = 1;
+    final urlEndpoint = Uri.http('numbersapi.com', tNumber.toString());
+    const urlHeaders = {'Content-Type': 'application/json'};
+    final tNumberTriviaModel = NumberTriviaModel.fromJson(
+      json.decode(fixtureReader('trivia.json')),
+    );
+    test('''should GET request on URL with number endpoint 
+            and application/json header''', () async {
+      //arrange
+      when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(fixtureReader('trivia.json'), 200));
+      //act
+      dataSource.getConcreteNumberTrivia(tNumber);
+      //assert
+      verify(mockHttpClient.get(urlEndpoint, headers: urlHeaders));
+    });
+
+    test('should return NumberTrivia when response status is 200', () async {
+      //arrange
+      when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(fixtureReader('trivia.json'), 200));
+      //act
+      final result = await dataSource.getConcreteNumberTrivia(tNumber);
+      //assert
+      expect(result, tNumberTriviaModel);
+    });
+
+    test('should throw ServerException when response status not 200', () async {
+      //arrange
+      //act
+      //assert
+    });
+  });
 }
