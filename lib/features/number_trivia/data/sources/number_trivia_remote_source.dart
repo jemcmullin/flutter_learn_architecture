@@ -27,19 +27,20 @@ class NumberTriviaRemoteSourceImplementation
   static const _urlHeaders = {'Content-Type': 'application/json'};
 
   @override
-  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
-    final urlEndpoint = Uri.http(_baseUrl, number.toString());
+  Future<NumberTriviaModel> getConcreteNumberTrivia(int number) =>
+      _getTriviaFromUrl(number.toString());
+
+  @override
+  Future<NumberTriviaModel> getRandomNumberTrivia() =>
+      _getTriviaFromUrl('random');
+
+  Future<NumberTriviaModel> _getTriviaFromUrl(String endpoint) async {
+    final urlEndpoint = Uri.http(_baseUrl, endpoint);
     final response = await client.get(urlEndpoint, headers: _urlHeaders);
     if (response.statusCode == 200) {
       return NumberTriviaModel.fromJson(json.decode(response.body));
     } else {
       throw ServerException();
     }
-  }
-
-  @override
-  Future<NumberTriviaModel> getRandomNumberTrivia() async {
-    // TODO: implement getRandomNumberTrivia
-    throw UnimplementedError();
   }
 }
