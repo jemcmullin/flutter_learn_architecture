@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter_learn_architecture/core/error/exceptions.dart';
 import 'package:flutter_learn_architecture/core/error/failures.dart';
 import 'package:flutter_learn_architecture/core/network/network_info.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_learn_architecture/features/number_trivia/data/repositor
 import 'package:flutter_learn_architecture/features/number_trivia/data/sources/number_trivia_local_source.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/data/sources/number_trivia_remote_source.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/domain/entities/number_trivia.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
