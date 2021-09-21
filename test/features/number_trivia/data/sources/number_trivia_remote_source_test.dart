@@ -47,8 +47,12 @@ void main() {
 
     test('should throw ServerException when response status not 200', () async {
       //arrange
+      when(mockHttpClient.get(any, headers: anyNamed('headers')))
+          .thenAnswer((_) async => http.Response('error', 404));
       //act
+      final call = dataSource.getConcreteNumberTrivia;
       //assert
+      expect(() => call(tNumber), throwsA(isA<ServerException>()));
     });
   });
 }

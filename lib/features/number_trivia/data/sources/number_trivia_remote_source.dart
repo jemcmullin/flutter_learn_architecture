@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../../../../core/error/exceptions.dart';
 import '../models/number_trivia_model.dart';
 
 abstract class NumberTriviaRemoteSource {
@@ -29,7 +30,11 @@ class NumberTriviaRemoteSourceImplementation
   Future<NumberTriviaModel> getConcreteNumberTrivia(int number) async {
     final urlEndpoint = Uri.http(_baseUrl, number.toString());
     final response = await client.get(urlEndpoint, headers: _urlHeaders);
-    return NumberTriviaModel.fromJson(json.decode(response.body));
+    if (response.statusCode == 200) {
+      return NumberTriviaModel.fromJson(json.decode(response.body));
+    } else {
+      throw ServerException();
+    }
   }
 
   @override
