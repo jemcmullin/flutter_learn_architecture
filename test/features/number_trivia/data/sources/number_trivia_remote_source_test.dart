@@ -17,6 +17,16 @@ void main() {
   final dataSource =
       NumberTriviaRemoteSourceImplementation(client: mockHttpClient);
 
+  void setupMockHttpClientSuccess200() {
+    when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+        (_) async => http.Response(fixtureReader('trivia.json'), 200));
+  }
+
+  void setupMockHttpClientFailure404() {
+    when(mockHttpClient.get(any, headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response('error', 404));
+  }
+
   group('getConcreteNumberTrivia', () {
     const tNumber = 1;
     final urlEndpoint = Uri.http('numbersapi.com', tNumber.toString());
@@ -27,8 +37,7 @@ void main() {
     test('''should GET request on URL with number endpoint 
             and application/json header''', () async {
       //arrange
-      when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-          (_) async => http.Response(fixtureReader('trivia.json'), 200));
+      setupMockHttpClientSuccess200();
       //act
       dataSource.getConcreteNumberTrivia(tNumber);
       //assert
@@ -37,8 +46,7 @@ void main() {
 
     test('should return NumberTrivia when response status is 200', () async {
       //arrange
-      when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-          (_) async => http.Response(fixtureReader('trivia.json'), 200));
+      setupMockHttpClientSuccess200();
       //act
       final result = await dataSource.getConcreteNumberTrivia(tNumber);
       //assert
@@ -47,8 +55,7 @@ void main() {
 
     test('should throw ServerException when response status not 200', () async {
       //arrange
-      when(mockHttpClient.get(any, headers: anyNamed('headers')))
-          .thenAnswer((_) async => http.Response('error', 404));
+      setupMockHttpClientFailure404();
       //act
       final call = dataSource.getConcreteNumberTrivia;
       //assert
