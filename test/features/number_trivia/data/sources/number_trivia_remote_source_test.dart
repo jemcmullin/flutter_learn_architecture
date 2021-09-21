@@ -13,7 +13,7 @@ import '../../../../fixtures/fixture_reader.dart';
 
 @GenerateMocks([http.Client])
 void main() {
-  final mockHttpClient = MockHttpClient();
+  final mockHttpClient = MockClient();
   final dataSource =
       NumberTriviaRemoteSourceImplementation(client: mockHttpClient);
 

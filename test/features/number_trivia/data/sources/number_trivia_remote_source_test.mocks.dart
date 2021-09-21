@@ -26,11 +26,11 @@ class _FakeResponse_0 extends _i1.Fake implements _i2.Response {}
 class _FakeStreamedResponse_1 extends _i1.Fake implements _i3.StreamedResponse {
 }
 
-/// A class which mocks [http.Client].
+/// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpClient extends _i1.Mock implements _i4.Client {
-  MockHttpClient() {
+class MockClient extends _i1.Mock implements _i4.Client {
+  MockClient() {
     _i1.throwOnMissingStub(this);
   }
 
