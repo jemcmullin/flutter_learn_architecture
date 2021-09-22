@@ -34,7 +34,6 @@ dependencies:
   # Bloc for state management
   bloc: ^7.2.0
   flutter_bloc: ^7.3.0
-  bloc_test: ^8.2.0
   # Value equality
   equatable: ^2.0.3
   # Functional programming thingies
@@ -49,6 +48,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.0.14
+  bloc_test: ^8.2.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

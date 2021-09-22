@@ -15,13 +15,12 @@ import 'package:mockito/mockito.dart';
 
 @GenerateMocks([GetConcreteNumberTrivia, GetRandomNumberTrivia, InputConverter])
 void main() {
-  //MockGetConcreteNumberTrivia mockGetConcreteNumberTrivia;
   final mockGetConcreteNumberTrivia = MockGetConcreteNumberTrivia();
   final mockGetRandomNumberTrivia = MockGetRandomNumberTrivia();
   final mockInputConverter = MockInputConverter();
   final bloc = NumberTriviaBloc(
-    concrete: mockGetConcreteNumberTrivia,
-    random: mockGetRandomNumberTrivia,
+    getConcreteNumberTrivia: mockGetConcreteNumberTrivia,
+    getRandomNumberTrivia: mockGetRandomNumberTrivia,
     inputConverter: mockInputConverter,
   );
 

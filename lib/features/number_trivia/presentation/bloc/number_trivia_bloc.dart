@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -22,34 +20,30 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
   final InputConverter inputConverter;
 
   NumberTriviaBloc({
-    required GetConcreteNumberTrivia concrete,
-    required GetRandomNumberTrivia random,
+    required this.getConcreteNumberTrivia,
+    required this.getRandomNumberTrivia,
     required this.inputConverter,
-  })  : getConcreteNumberTrivia = concrete,
-        getRandomNumberTrivia = random,
-        super(Empty());
-
-  @override
-  Stream<NumberTriviaState> mapEventToState(
-    NumberTriviaEvent event,
-  ) async* {
-    if (event is GetTriviaForConcreteNumber) {
-      final inputEither =
-          inputConverter.stringToUnsignedInteger(event.numberString);
-      yield* inputEither.fold(
-        (failure) async* {
-          yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
-        },
-        (integer) async* {
-          yield Loading();
-          final eitherFailureOrTrivia =
-              await getConcreteNumberTrivia(Parameters(number: integer));
-          yield eitherFailureOrTrivia.fold(
-            (failure) => Error(message: SERVER_FAILURE_MESSAGE),
-            (trivia) => Loaded(trivia: trivia),
-          );
-        },
-      );
-    }
+  }) : super(Empty()) {
+    on<GetTriviaForConcreteNumber>(
+      (event, emit) async {
+        final inputEither = inputConverter.stringToUnsignedInteger(
+          event.numberString,
+        );
+        inputEither.fold(
+          (failure) {
+            emit(Error(message: INVALID_INPUT_FAILURE_MESSAGE));
+          },
+          (integer) async {
+            emit(Loading());
+            final eitherFailureOrTrivia =
+                await getConcreteNumberTrivia(Parameters(number: integer));
+            eitherFailureOrTrivia.fold(
+              (failure) => emit(Error(message: SERVER_FAILURE_MESSAGE)),
+              (trivia) => emit(Loaded(trivia: trivia)),
+            );
+          },
+        );
+      },
+    );
   }
 }
