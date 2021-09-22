@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_learn_architecture/core/error/failures.dart';
 import 'package:flutter_learn_architecture/core/util/input_converter.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/domain/usecases/get_concrete_number_trivia.dart';
@@ -14,6 +15,7 @@ import 'package:mockito/mockito.dart';
 
 @GenerateMocks([GetConcreteNumberTrivia, GetRandomNumberTrivia, InputConverter])
 void main() {
+  //MockGetConcreteNumberTrivia mockGetConcreteNumberTrivia;
   final mockGetConcreteNumberTrivia = MockGetConcreteNumberTrivia();
   final mockGetRandomNumberTrivia = MockGetRandomNumberTrivia();
   final mockInputConverter = MockInputConverter();
@@ -32,14 +34,19 @@ void main() {
     const tNumberString = '1';
     const tNumberParsed = 1;
     const tNumberTrivia = NumberTrivia(number: 1, text: 'test trivia');
+
+    void setupMockSuccessCase() {
+      when(mockInputConverter.stringToUnsignedInteger(any))
+          .thenReturn(Right(tNumberParsed));
+      when(mockGetConcreteNumberTrivia(any))
+          .thenAnswer((_) async => Right(tNumberTrivia));
+    }
+
     test(
       'should call InputConverter with string',
       () async {
         //arrange
-        when(mockInputConverter.stringToUnsignedInteger(any))
-            .thenReturn(Right(tNumberParsed));
-        when(mockGetConcreteNumberTrivia(any))
-            .thenAnswer((_) async => Right(tNumberTrivia));
+        setupMockSuccessCase();
         //act
         bloc.add(GetTriviaForConcreteNumber(tNumberString));
         await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
@@ -47,34 +54,54 @@ void main() {
         verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
       },
     );
-    blocTest(
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
       'should emit [Error] when input is invalid',
       build: () {
         when(mockInputConverter.stringToUnsignedInteger(any))
             .thenReturn(Left(InvalidInputFailure()));
         return bloc;
       },
-      act: (NumberTriviaBloc bloc) =>
-          bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      act: (bloc) => bloc.add(GetTriviaForConcreteNumber(tNumberString)),
       expect: () => [Error(message: INVALID_INPUT_FAILURE_MESSAGE)],
     );
 
-    blocTest(
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
       'should get data from concrete use case',
-      setUp: () {
-        when(mockInputConverter.stringToUnsignedInteger(any))
-            .thenReturn(Right(tNumberParsed));
-        when(mockGetConcreteNumberTrivia(any))
-            .thenAnswer((_) async => Right(tNumberTrivia));
-      },
+      setUp: () => setupMockSuccessCase(),
       build: () => bloc,
-      act: (NumberTriviaBloc bloc) =>
-          bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      act: (bloc) => bloc.add(GetTriviaForConcreteNumber(tNumberString)),
       verify: (_) {
         verify(
           mockGetConcreteNumberTrivia(Parameters(number: tNumberParsed)),
         );
       },
+    );
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emit states [Loading, Loaded] when data success',
+      setUp: () => setupMockSuccessCase(),
+      build: () => bloc,
+      act: (bloc) => bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => [
+        Loading(),
+        Loaded(trivia: tNumberTrivia),
+      ],
+    );
+    blocTest<NumberTriviaBloc, NumberTriviaState>(
+      'should emit states [Loading, Error] when data fails',
+      setUp: () {
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Right(tNumberParsed));
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Left(ServerFailure()));
+      },
+      build: () => bloc,
+      act: (bloc) {
+        bloc.add(GetTriviaForConcreteNumber(tNumberString));
+      },
+      expect: () => [
+        Loading(),
+        Error(message: SERVER_FAILURE_MESSAGE),
+      ],
     );
   });
 }

@@ -36,13 +36,18 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
     if (event is GetTriviaForConcreteNumber) {
       final inputEither =
           inputConverter.stringToUnsignedInteger(event.numberString);
-
       yield* inputEither.fold(
         (failure) async* {
-          yield const Error(message: INVALID_INPUT_FAILURE_MESSAGE);
+          yield Error(message: INVALID_INPUT_FAILURE_MESSAGE);
         },
         (integer) async* {
-          getConcreteNumberTrivia(Parameters(number: integer));
+          yield Loading();
+          final eitherFailureOrTrivia =
+              await getConcreteNumberTrivia(Parameters(number: integer));
+          yield eitherFailureOrTrivia.fold(
+            (failure) => Error(message: SERVER_FAILURE_MESSAGE),
+            (trivia) => Loaded(trivia: trivia),
+          );
         },
       );
     }
