@@ -37,10 +37,10 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
             emit(Loading());
             final eitherFailureOrTrivia =
                 await getConcreteNumberTrivia(Parameters(number: integer));
-            eitherFailureOrTrivia.fold(
-              (failure) => emit(Error(message: SERVER_FAILURE_MESSAGE)),
-              (trivia) => emit(Loaded(trivia: trivia)),
-            );
+            emit(eitherFailureOrTrivia.fold(
+              (failure) => Error(message: SERVER_FAILURE_MESSAGE),
+              (trivia) => Loaded(trivia: trivia),
+            ));
           },
         );
       },

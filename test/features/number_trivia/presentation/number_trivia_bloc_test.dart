@@ -34,9 +34,13 @@ void main() {
     const tNumberParsed = 1;
     const tNumberTrivia = NumberTrivia(number: 1, text: 'test trivia');
 
-    void setupMockSuccessCase() {
+    void setupMockInputConverterSuccess() {
       when(mockInputConverter.stringToUnsignedInteger(any))
           .thenReturn(Right(tNumberParsed));
+    }
+
+    void setupMockSuccessCase() {
+      setupMockInputConverterSuccess();
       when(mockGetConcreteNumberTrivia(any))
           .thenAnswer((_) async => Right(tNumberTrivia));
     }
@@ -77,9 +81,14 @@ void main() {
     );
     blocTest<NumberTriviaBloc, NumberTriviaState>(
       'should emit states [Loading, Loaded] when data success',
-      setUp: () => setupMockSuccessCase(),
+      setUp: () {
+        setupMockSuccessCase();
+      },
       build: () => bloc,
-      act: (bloc) => bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      act: (bloc) {
+        bloc.add(GetTriviaForConcreteNumber(tNumberString));
+      },
+      //wait: Duration(seconds: 5),
       expect: () => [
         Loading(),
         Loaded(trivia: tNumberTrivia),
@@ -88,8 +97,7 @@ void main() {
     blocTest<NumberTriviaBloc, NumberTriviaState>(
       'should emit states [Loading, Error] when data fails',
       setUp: () {
-        when(mockInputConverter.stringToUnsignedInteger(any))
-            .thenReturn(Right(tNumberParsed));
+        setupMockInputConverterSuccess();
         when(mockGetConcreteNumberTrivia(any))
             .thenAnswer((_) async => Left(ServerFailure()));
       },
@@ -97,6 +105,7 @@ void main() {
       act: (bloc) {
         bloc.add(GetTriviaForConcreteNumber(tNumberString));
       },
+      //wait: Duration(seconds: 5),
       expect: () => [
         Loading(),
         Error(message: SERVER_FAILURE_MESSAGE),
