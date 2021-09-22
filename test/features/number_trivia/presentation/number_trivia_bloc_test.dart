@@ -1,5 +1,6 @@
-import 'dart:math';
+// ignore_for_file: prefer_const_constructors
 
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_learn_architecture/core/util/input_converter.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/domain/entities/number_trivia.dart';
 import 'package:flutter_learn_architecture/features/number_trivia/domain/usecases/get_concrete_number_trivia.dart';
@@ -31,15 +32,49 @@ void main() {
     const tNumberString = '1';
     const tNumberParsed = 1;
     const tNumberTrivia = NumberTrivia(number: 1, text: 'test trivia');
-    test('should call InputConverter with string', () async {
-      //arrange
-      when(mockInputConverter.stringToUnsignedInteger(any))
-          .thenReturn(const Right(tNumberParsed));
-      //act
-      bloc.add(const GetTriviaForConcreteNumber(tNumberString));
-      await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
-      //assert
-      verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
-    });
+    test(
+      'should call InputConverter with string',
+      () async {
+        //arrange
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Right(tNumberParsed));
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Right(tNumberTrivia));
+        //act
+        bloc.add(GetTriviaForConcreteNumber(tNumberString));
+        await untilCalled(mockInputConverter.stringToUnsignedInteger(any));
+        //assert
+        verify(mockInputConverter.stringToUnsignedInteger(tNumberString));
+      },
+    );
+    blocTest(
+      'should emit [Error] when input is invalid',
+      build: () {
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Left(InvalidInputFailure()));
+        return bloc;
+      },
+      act: (NumberTriviaBloc bloc) =>
+          bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      expect: () => [Error(message: INVALID_INPUT_FAILURE_MESSAGE)],
+    );
+
+    blocTest(
+      'should get data from concrete use case',
+      setUp: () {
+        when(mockInputConverter.stringToUnsignedInteger(any))
+            .thenReturn(Right(tNumberParsed));
+        when(mockGetConcreteNumberTrivia(any))
+            .thenAnswer((_) async => Right(tNumberTrivia));
+      },
+      build: () => bloc,
+      act: (NumberTriviaBloc bloc) =>
+          bloc.add(GetTriviaForConcreteNumber(tNumberString)),
+      verify: (_) {
+        verify(
+          mockGetConcreteNumberTrivia(Parameters(number: tNumberParsed)),
+        );
+      },
+    );
   });
 }
