@@ -17,12 +17,7 @@ import 'features/number_trivia/presentation/bloc/number_trivia_bloc.dart';
 final getIt = GetIt.instance;
 
 void init() {
-  initFeatures();
-  initCore();
-  initExternal();
-}
-
-void initFeatures() {
+//Features
   //Bloc
   getIt.registerFactory(
     () => NumberTriviaBloc(
@@ -52,19 +47,21 @@ void initFeatures() {
   getIt.registerLazySingleton<NumberTriviaLocalSource>(
     () => NumberTriviaLocalSourceImplementation(sharedPreferences: getIt()),
   );
-}
+  // getIt.registerSingletonWithDependencies<NumberTriviaLocalSource>(
+  //   () => NumberTriviaLocalSourceImplementation(sharedPreferences: getIt()),
+  //   dependsOn: [SharedPreferences],
+  // );
 
-void initCore() {
+//Core
   //Util
   getIt.registerLazySingleton(() => InputConverter());
   //Network
   getIt.registerLazySingleton<NetworkInfo>(
       () => NetworkInfoImplementation(getIt()));
-}
 
-void initExternal() {
-  getIt.registerLazySingletonAsync<SharedPreferences>(
-      () async => await SharedPreferences.getInstance());
-  getIt.registerLazySingleton(() => http.Client());
+//External
+  getIt.registerSingletonAsync<SharedPreferences>(
+      () async => SharedPreferences.getInstance());
+  getIt.registerLazySingleton<http.Client>(() => http.Client());
   getIt.registerLazySingleton(() => InternetConnectionChecker());
 }
