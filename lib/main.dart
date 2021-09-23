@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'injection_container.dart' as getitdi;
 
 void main() {
+  getitdi.init();
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

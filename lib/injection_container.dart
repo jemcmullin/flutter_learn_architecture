@@ -14,7 +14,7 @@ import 'features/number_trivia/data/sources/number_trivia_local_source.dart';
 import 'features/number_trivia/domain/repositories/number_trivia_repository.dart';
 
 //Service Locator
-final sl = GetIt.instance;
+final getIt = GetIt.instance;
 
 void init() {
   initFeatures();
@@ -24,46 +24,47 @@ void init() {
 
 void initFeatures() {
   //Bloc
-  sl.registerFactory(
+  getIt.registerFactory(
     () => NumberTriviaBloc(
-      getConcreteNumberTrivia: sl(),
-      getRandomNumberTrivia: sl(),
-      inputConverter: sl(),
+      getConcreteNumberTrivia: getIt(),
+      getRandomNumberTrivia: getIt(),
+      inputConverter: getIt(),
     ),
   );
 
   //Use Cases
-  sl.registerLazySingleton(() => GetConcreteNumberTrivia(sl()));
-  sl.registerLazySingleton(() => GetRandomNumberTrivia(sl()));
+  getIt.registerLazySingleton(() => GetConcreteNumberTrivia(getIt()));
+  getIt.registerLazySingleton(() => GetRandomNumberTrivia(getIt()));
 
   //Repository
-  sl.registerLazySingleton<NumberTriviaRepository>(
+  getIt.registerLazySingleton<NumberTriviaRepository>(
     () => NumberTriviaRepositoryImplementation(
-      localDataSource: sl(),
-      networkInfo: sl(),
-      remoteDataSource: sl(),
+      localDataSource: getIt(),
+      networkInfo: getIt(),
+      remoteDataSource: getIt(),
     ),
   );
 
   //Data Sources
-  sl.registerLazySingleton<NumberTriviaRemoteSource>(
-    () => NumberTriviaRemoteSourceImplementation(client: sl()),
+  getIt.registerLazySingleton<NumberTriviaRemoteSource>(
+    () => NumberTriviaRemoteSourceImplementation(client: getIt()),
   );
-  sl.registerLazySingleton<NumberTriviaLocalSource>(
-    () => NumberTriviaLocalSourceImplementation(sharedPreferences: sl()),
+  getIt.registerLazySingleton<NumberTriviaLocalSource>(
+    () => NumberTriviaLocalSourceImplementation(sharedPreferences: getIt()),
   );
 }
 
 void initCore() {
   //Util
-  sl.registerLazySingleton(() => InputConverter());
+  getIt.registerLazySingleton(() => InputConverter());
   //Network
-  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImplementation(sl()));
+  getIt.registerLazySingleton<NetworkInfo>(
+      () => NetworkInfoImplementation(getIt()));
 }
 
 void initExternal() {
-  sl.registerLazySingletonAsync<SharedPreferences>(
+  getIt.registerLazySingletonAsync<SharedPreferences>(
       () async => await SharedPreferences.getInstance());
-  sl.registerLazySingleton(() => http.Client());
-  sl.registerLazySingleton(() => InternetConnectionChecker());
+  getIt.registerLazySingleton(() => http.Client());
+  getIt.registerLazySingleton(() => InternetConnectionChecker());
 }
