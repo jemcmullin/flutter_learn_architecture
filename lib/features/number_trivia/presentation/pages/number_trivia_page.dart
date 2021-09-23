@@ -15,47 +15,47 @@ class NumberTriviaPage extends StatelessWidget {
       ),
       body: BlocProvider<NumberTriviaBloc>(
         create: (context) => getIt<NumberTriviaBloc>(),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10,
-            ),
-            //Text Display
-            Container(
-              height: MediaQuery.of(context).size.height / 3,
-              child: Placeholder(),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            //User Input
-            Column(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
               children: [
-                //InputBox
-                Placeholder(
-                  fallbackHeight: 50,
+                const SizedBox(
+                  height: 10,
+                ),
+                //Text Display
+                Container(
+                  height: MediaQuery.of(context).size.height / 3,
+                  child: Placeholder(),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //User Input
+                Column(
                   children: [
-                    //Button for concrete
-                    Placeholder(
-                      fallbackHeight: 50,
-                      fallbackWidth: 150,
-                    ),
-                    //Button for random
-                    Placeholder(
-                      fallbackHeight: 50,
-                      fallbackWidth: 150,
-                    ),
+                    //InputBox
+                    Placeholder(fallbackHeight: 50),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        //Button for concrete
+                        Expanded(
+                          child: Placeholder(fallbackHeight: 50),
+                        ),
+                        const SizedBox(width: 10),
+                        //Button for random
+                        Expanded(
+                          child: Placeholder(fallbackHeight: 50),
+                        ),
+                      ],
+                    )
                   ],
                 )
               ],
-            )
-          ],
+            ),
+          ),
         ),
       ),
     );
