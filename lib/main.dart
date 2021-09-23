@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       title: 'Number Trivia',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSwatch(accentColor: Colors.yellow),
       ),
       home: const NumberTriviaPage(),
     );
