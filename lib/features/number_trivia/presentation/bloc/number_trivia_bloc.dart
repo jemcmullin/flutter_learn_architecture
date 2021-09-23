@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_learn_architecture/core/error/failures.dart';
 import 'package:flutter_learn_architecture/core/usecases/usecase.dart';
@@ -39,10 +40,7 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
             emit(Loading());
             final eitherFailureOrTrivia =
                 await getConcreteNumberTrivia(Parameters(number: integer));
-            emit(eitherFailureOrTrivia.fold(
-              (failure) => Error(message: _mapFailureToError(failure)),
-              (trivia) => Loaded(trivia: trivia),
-            ));
+            _emitEitherLoadedOrError(emit, eitherFailureOrTrivia);
           },
         );
       },
@@ -51,12 +49,17 @@ class NumberTriviaBloc extends Bloc<NumberTriviaEvent, NumberTriviaState> {
       (event, emit) async {
         emit(Loading());
         final eitherFailureOrTrivia = await getRandomNumberTrivia(NoParams());
-        emit(eitherFailureOrTrivia.fold(
-          (failure) => Error(message: _mapFailureToError(failure)),
-          (trivia) => Loaded(trivia: trivia),
-        ));
+        _emitEitherLoadedOrError(emit, eitherFailureOrTrivia);
       },
     );
+  }
+
+  void _emitEitherLoadedOrError(Emitter<NumberTriviaState> emit,
+      Either<Failure, NumberTrivia> eitherFailureOrTrivia) {
+    emit(eitherFailureOrTrivia.fold(
+      (failure) => Error(message: _mapFailureToError(failure)),
+      (trivia) => Loaded(trivia: trivia),
+    ));
   }
 
   String _mapFailureToError(Failure failure) {
