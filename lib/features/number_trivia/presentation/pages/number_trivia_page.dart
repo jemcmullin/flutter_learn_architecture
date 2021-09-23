@@ -14,7 +14,7 @@ class NumberTriviaPage extends StatelessWidget {
         title: const Text('Number Trivia'),
       ),
       body: BlocProvider<NumberTriviaBloc>(
-        create: (context) => getIt<NumberTriviaBloc>(),
+        create: (_) => getIt<NumberTriviaBloc>(),
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(10),
